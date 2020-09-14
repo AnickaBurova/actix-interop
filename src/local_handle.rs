@@ -6,7 +6,7 @@ use std::task::{Context, Poll};
 
 use futures::channel::oneshot;
 use futures::future::FutureExt;
-use pin_project::{pin_project, project};
+use pin_project::pin_project;
 
 /// The handle to a local future returned by
 /// [`local_handle`](crate::future::FutureExt::local_handle). When you drop this,
@@ -51,10 +51,10 @@ impl<Fut: Future + fmt::Debug> fmt::Debug for Local<Fut> {
 impl<Fut: Future> Future for Local<Fut> {
     type Output = ();
 
-    #[project]
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<()> {
-        #[project]
-        let Local { tx, future } = self.project();
+        let this = self.project();
+        let tx = this.tx;
+        let future = this.future;
         if tx.as_mut().unwrap().poll_canceled(cx).is_ready() {
             // Cancelled, bail out
             return Poll::Ready(());
