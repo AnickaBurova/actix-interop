@@ -225,8 +225,8 @@ impl<A: Actor, F: Future> FutureInteropWrap<A, F> {
     }
 }
 
-impl<A: Actor, F: Future> ActorFuture for FutureInteropWrap<A, F> {
-    type Actor = A;
+impl<A: Actor, F: Future> ActorFuture<A> for FutureInteropWrap<A, F> {
+    // type Actor = A;
     type Output = F::Output;
 
     fn poll(
@@ -279,8 +279,8 @@ impl<A: Actor, S: Stream> StreamInteropWrap<A, S> {
     }
 }
 
-impl<A: Actor, S: Stream> ActorStream for StreamInteropWrap<A, S> {
-    type Actor = A;
+impl<A: Actor, S: Stream> ActorStream<A> for StreamInteropWrap<A, S> {
+    // type Actor = A;
     type Item = S::Item;
 
     fn poll_next(
@@ -301,7 +301,7 @@ pub trait StreamInterop<A: Actor>: Stream + Sized {
     fn interop_actor(self, actor: &A) -> StreamInteropWrap<A, Self>;
     /// Convert a stream using the `with_ctx` or `critical_section` methods into a boxed
     /// ActorStream.
-    fn interop_actor_boxed(self, actor: &A) -> Box<dyn ActorStream<Item = Self::Item, Actor = A>>
+    fn interop_actor_boxed(self, actor: &A) -> Box<dyn ActorStream<A, Item = Self::Item>>
     where
         Self: 'static,
     {
